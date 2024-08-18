@@ -180,14 +180,14 @@ int entry(int argc, char** argv) {
   float64 last_time = os_get_current_time_in_seconds();
   while (!window.should_close) {
     reset_temporary_storage();
-
-    draw_frame.projection = m4_make_orthographic_projection(window.width * -0.5, window.width * 0.5, window.height * -0.5, window.height * 0.5, -1, 10);
-
     float64 now     = os_get_current_time_in_seconds();
     float64 delta_t = now - last_time;
     last_time       = now;
     os_update();
 
+    draw_frame.projection = m4_make_orthographic_projection(window.width * -0.5, window.width * 0.5, window.height * -0.5, window.height * 0.5, -1, 10);
+
+    // :camera
     {
       Vector2 target_pos = player_en->pos;
       animate_v2_to_target(&camera_pos, target_pos, delta_t, 30.0f);
@@ -205,6 +205,23 @@ int entry(int argc, char** argv) {
       Vector2 pos = screen_to_world();
       // log("%f, %f", pos.x, pos.y);
       draw_text(font, tprint("%f %f", pos.x, pos.y), font_height, pos, v2(0.1, 0.1), COLOR_RED);
+
+      		for (int i = 0; i < MAX_ENTITY_COUNT; i++) {
+				Entity* en = &world->entities[i];
+				if (en->is_valid) {
+					Sprite* sprite = get_sprite(en->sprite_id);
+					Range2f bounds = range2f_make_bottom_center(sprite->size);
+					bounds = range2f_shift(bounds, en->pos);
+
+					Vector4 col = COLOR_WHITE;
+					col.a = 0.4;
+					if (range2f_contains(bounds, mouse_pos)) {
+						col.a = 1.0;
+					}
+
+					draw_rect(bounds.min, range2f_size(bounds), col);
+				}
+			}
     }
 
     // :tile rendering
