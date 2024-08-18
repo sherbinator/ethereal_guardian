@@ -21,16 +21,16 @@ Sprite* get_sprite(SpriteID id) {
   return &sprites[0];
 }
 
-typedef enum EntityArchType {
+typedef enum EntityArcheType {
   arch_nil    = 0,
   arch_rock   = 1,
   arch_tree   = 2,
   arch_player = 3,
-} EntityArchType;
+} EntityArcheType;
 
 typedef struct Entity {
   bool           is_valid;
-  EntityArchType arch;
+  EntityArcheType arch;
   Vector2        pos;
   bool           render_sprite;
   SpriteID       sprite_id;
@@ -84,7 +84,8 @@ int entry(int argc, char** argv) {
   window.y             = 200;
   window.clear_color   = hex_to_rgba(0x2a2d3aff);
 
-  world = alloc(get_heap_allocator(), sizeof(world));
+  world = alloc(get_heap_allocator(), sizeof(World));
+  memset(world, 0, sizeof(World));
 
   // Assets
   sprites[SPRITE_player] = (Sprite){.image = load_image_from_disk(STR("./res/sprites/player.png"), get_heap_allocator()), .size = v2(6.0, 8.0)};
@@ -100,6 +101,7 @@ int entry(int argc, char** argv) {
     setup_rock(en);
     en->pos = v2(get_random_float32_in_range(-200, 200), get_random_float32_in_range(-200, 200));
   }
+
   for (int i = 0; i < 10; i++) {
     Entity* en = entity_create();
     setup_tree(en);
