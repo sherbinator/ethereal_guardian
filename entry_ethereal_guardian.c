@@ -112,7 +112,7 @@ Vector2 screen_to_world() {
   float   mouse_x  = input_frame.mouse_x;
   float   mouse_y  = input_frame.mouse_y;
   Matrix4 proj     = draw_frame.projection;
-  Matrix4 view     = draw_frame.view;
+  Matrix4 view     = draw_frame.camera_xform;
   float   window_w = window.width;
   float   window_h = window.height;
 
@@ -177,10 +177,10 @@ int entry(int argc, char** argv) {
   float   zoom       = 5.3;
   Vector2 camera_pos = v2(0, 0);
 
-  float64 last_time = os_get_current_time_in_seconds();
+  float64 last_time = os_get_elapsed_seconds();
   while (!window.should_close) {
     reset_temporary_storage();
-    float64 now     = os_get_current_time_in_seconds();
+    float64 now     = os_get_elapsed_seconds();
     float64 delta_t = now - last_time;
     last_time       = now;
     os_update();
@@ -192,9 +192,9 @@ int entry(int argc, char** argv) {
       Vector2 target_pos = player_en->pos;
       animate_v2_to_target(&camera_pos, target_pos, delta_t, 30.0f);
 
-      draw_frame.view = m4_make_scale(v3(1.0, 1.0, 1.0));
-      draw_frame.view = m4_mul(draw_frame.view, m4_make_translation(v3(camera_pos.x, camera_pos.y, 0)));
-      draw_frame.view = m4_mul(draw_frame.view, m4_make_scale(v3(1.0 / zoom, 1.0 / zoom, 1.0)));
+      draw_frame.camera_xform = m4_make_scale(v3(1.0, 1.0, 1.0));
+      draw_frame.camera_xform = m4_mul(draw_frame.camera_xform, m4_make_translation(v3(camera_pos.x, camera_pos.y, 0)));
+      draw_frame.camera_xform = m4_mul(draw_frame.camera_xform, m4_make_scale(v3(1.0 / zoom, 1.0 / zoom, 1.0)));
     }
 
     Vector2 mouse_pos    = screen_to_world();
