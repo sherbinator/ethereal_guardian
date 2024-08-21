@@ -1,5 +1,5 @@
 inline float v2_dist(Vector2 a, Vector2 b) {
-    return v2_length(v2_sub(a, b));
+  return v2_length(v2_sub(a, b));
 }
 
 // ^^^ engine changes
@@ -225,6 +225,7 @@ int entry(int argc, char** argv) {
   float64 last_time = os_get_elapsed_seconds();
   while (!window.should_close) {
     reset_temporary_storage();
+    world_frame     = (WorldFrame){0};
     float64 now     = os_get_elapsed_seconds();
     float64 delta_t = now - last_time;
     last_time       = now;
